@@ -29,13 +29,15 @@ namespace SentinelX.Engine
 
                 var securityService = new Services.WindowsSecurityService(logger);
                 var deviceProcessService = new Services.DeviceProcessService(logger);
+                var networkService = new Services.NetworkService(logger);
 
                 var handlers = new List<IRequestHandler>
                 {
                     new PingHandler(),
                     new HealthHandler(startedAtUtc),
                     new ProtectionHandler(securityService),
-                    new DeviceProcessHandler(deviceProcessService)
+                    new DeviceProcessHandler(deviceProcessService),
+                    new NetworkHandler(networkService)
                 };
 
                 ipcServer = new IpcServer(logger, sessionManager.CurrentSession, handlers, () =>

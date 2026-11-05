@@ -246,10 +246,10 @@ namespace SentinelX.Contracts
         public int ProcessId { get; set; }
         public string ProcessName { get; set; }
         public string StartTimeUtc { get; set; }
-        public string CompositeKey { get; set; } // PID + StartTimeUtc (Handles PID reuse)
+        public string CompositeKey { get; set; }
         public string ExecutablePath { get; set; }
         public string Publisher { get; set; }
-        public string PublisherStatus { get; set; } // ComponentStatus string
+        public string PublisherStatus { get; set; }
         public long WorkingSetBytes { get; set; }
         public double CpuPercent { get; set; }
         public bool AccessDenied { get; set; }
@@ -262,7 +262,60 @@ namespace SentinelX.Contracts
         public string ExecutablePath { get; set; }
         public string Publisher { get; set; }
         public string SourceLocation { get; set; }
-        public string Status { get; set; } // ComponentStatus string
+        public string Status { get; set; }
+    }
+
+    // ==========================================
+    // STAGE 4: Network Awareness & Discovery Contracts
+    // ==========================================
+
+    public class NetworkAdapterInfo
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string OperationalStatus { get; set; }
+        public string InterfaceType { get; set; }
+        public string Ipv4Address { get; set; }
+        public string SubnetMask { get; set; }
+        public string Gateway { get; set; }
+        public List<string> DnsServers { get; set; }
+        public long BytesReceived { get; set; }
+        public long BytesSent { get; set; }
+        public long RxBytesPerSec { get; set; }
+        public long TxBytesPerSec { get; set; }
+
+        public NetworkAdapterInfo()
+        {
+            DnsServers = new List<string>();
+        }
+    }
+
+    public class LocalDeviceItem
+    {
+        public string IpAddress { get; set; }
+        public string Hostname { get; set; }
+        public string MacAddress { get; set; }
+        public string VendorHint { get; set; }
+        public string DiscoveryMethod { get; set; }
+        public string Status { get; set; } // ComponentStatus
+        public string FirstSeenUtc { get; set; }
+        public string LastSeenUtc { get; set; }
+        public string UserLabel { get; set; }
+    }
+
+    public class NetworkActivitySnapshot
+    {
+        public List<NetworkAdapterInfo> Adapters { get; set; }
+        public long TotalRxBytesPerSec { get; set; }
+        public long TotalTxBytesPerSec { get; set; }
+        public string SnapshotTimestampUtc { get; set; }
+
+        public NetworkActivitySnapshot()
+        {
+            Adapters = new List<NetworkAdapterInfo>();
+            SnapshotTimestampUtc = DateTime.UtcNow.ToString("o");
+        }
     }
 
     public static class JsonHelper

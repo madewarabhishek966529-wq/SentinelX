@@ -60,7 +60,7 @@ class IpcResponse<T> {
   final String contractVersion;
   final String requestId;
   final String timestampUtc;
-  final String status; // 'success', 'error', 'partial'
+  final String status;
   final T? data;
   final IpcError? error;
 
@@ -465,6 +465,121 @@ class StartupItem {
       publisher: json['Publisher'] as String? ?? '',
       sourceLocation: json['SourceLocation'] as String? ?? '',
       status: ComponentStatus.fromString(json['Status'] as String?),
+    );
+  }
+}
+
+// Stage 4 Models
+class NetworkAdapterInfo {
+  final String id;
+  final String name;
+  final String description;
+  final String operationalStatus;
+  final String interfaceType;
+  final String ipv4Address;
+  final String subnetMask;
+  final String gateway;
+  final List<String> dnsServers;
+  final int bytesReceived;
+  final int bytesSent;
+  final int rxBytesPerSec;
+  final int txBytesPerSec;
+
+  NetworkAdapterInfo({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.operationalStatus,
+    required this.interfaceType,
+    required this.ipv4Address,
+    required this.subnetMask,
+    required this.gateway,
+    required this.dnsServers,
+    required this.bytesReceived,
+    required this.bytesSent,
+    required this.rxBytesPerSec,
+    required this.txBytesPerSec,
+  });
+
+  factory NetworkAdapterInfo.fromJson(Map<String, dynamic> json) {
+    return NetworkAdapterInfo(
+      id: json['Id'] as String? ?? '',
+      name: json['Name'] as String? ?? '',
+      description: json['Description'] as String? ?? '',
+      operationalStatus: json['OperationalStatus'] as String? ?? 'Unknown',
+      interfaceType: json['InterfaceType'] as String? ?? '',
+      ipv4Address: json['Ipv4Address'] as String? ?? 'Not assigned',
+      subnetMask: json['SubnetMask'] as String? ?? '',
+      gateway: json['Gateway'] as String? ?? 'None',
+      dnsServers: (json['DnsServers'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      bytesReceived: (json['BytesReceived'] as num?)?.toInt() ?? 0,
+      bytesSent: (json['BytesSent'] as num?)?.toInt() ?? 0,
+      rxBytesPerSec: (json['RxBytesPerSec'] as num?)?.toInt() ?? 0,
+      txBytesPerSec: (json['TxBytesPerSec'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+class LocalDeviceItem {
+  final String ipAddress;
+  final String hostname;
+  final String macAddress;
+  final String vendorHint;
+  final String discoveryMethod;
+  final ComponentStatus status;
+  final String firstSeenUtc;
+  final String lastSeenUtc;
+  final String userLabel;
+
+  LocalDeviceItem({
+    required this.ipAddress,
+    required this.hostname,
+    required this.macAddress,
+    required this.vendorHint,
+    required this.discoveryMethod,
+    required this.status,
+    required this.firstSeenUtc,
+    required this.lastSeenUtc,
+    required this.userLabel,
+  });
+
+  factory LocalDeviceItem.fromJson(Map<String, dynamic> json) {
+    return LocalDeviceItem(
+      ipAddress: json['IpAddress'] as String? ?? '',
+      hostname: json['Hostname'] as String? ?? 'Local Device',
+      macAddress: json['MacAddress'] as String? ?? '',
+      vendorHint: json['VendorHint'] as String? ?? '',
+      discoveryMethod: json['DiscoveryMethod'] as String? ?? 'ARP',
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      firstSeenUtc: json['FirstSeenUtc'] as String? ?? '',
+      lastSeenUtc: json['LastSeenUtc'] as String? ?? '',
+      userLabel: json['UserLabel'] as String? ?? '',
+    );
+  }
+}
+
+class NetworkActivitySnapshot {
+  final List<NetworkAdapterInfo> adapters;
+  final int totalRxBytesPerSec;
+  final int totalTxBytesPerSec;
+  final String snapshotTimestampUtc;
+
+  NetworkActivitySnapshot({
+    required this.adapters,
+    required this.totalRxBytesPerSec,
+    required this.totalTxBytesPerSec,
+    required this.snapshotTimestampUtc,
+  });
+
+  factory NetworkActivitySnapshot.fromJson(Map<String, dynamic> json) {
+    return NetworkActivitySnapshot(
+      adapters: (json['Adapters'] as List?)
+              ?.map((e) => NetworkAdapterInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      totalRxBytesPerSec: (json['TotalRxBytesPerSec'] as num?)?.toInt() ?? 0,
+      totalTxBytesPerSec: (json['TotalTxBytesPerSec'] as num?)?.toInt() ?? 0,
+      snapshotTimestampUtc: json['SnapshotTimestampUtc'] as String? ?? '',
     );
   }
 }

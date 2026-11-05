@@ -90,3 +90,4 @@ class ProtectionNotifier extends Notifier<ProtectionState> {
     }
   }
 }
+

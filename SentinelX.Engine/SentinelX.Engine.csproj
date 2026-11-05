@@ -39,8 +39,10 @@
     <Compile Include="Handlers\HealthHandler.cs" />
     <Compile Include="Handlers\ProtectionHandler.cs" />
     <Compile Include="Handlers\DeviceProcessHandler.cs" />
+    <Compile Include="Handlers\NetworkHandler.cs" />
     <Compile Include="Services\WindowsSecurityService.cs" />
     <Compile Include="Services\DeviceProcessService.cs" />
+    <Compile Include="Services\NetworkService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
