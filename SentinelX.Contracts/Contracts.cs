@@ -131,6 +131,85 @@ namespace SentinelX.Contracts
         }
     }
 
+    // ==========================================
+    // STAGE 2: Protection Posture Contracts
+    // ==========================================
+
+    public class AntivirusInfo
+    {
+        public string DisplayName { get; set; }
+        public string Status { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsUpToDate { get; set; }
+        public string ProductStateHex { get; set; }
+        public string Source { get; set; }
+        public string CheckedAtUtc { get; set; }
+        public string Limitations { get; set; }
+    }
+
+    public class FirewallProfileInfo
+    {
+        public string ProfileName { get; set; } // "Domain", "Private", "Public"
+        public string Status { get; set; }
+        public bool IsEnabled { get; set; }
+        public string InboundAction { get; set; }
+        public string OutboundAction { get; set; }
+        public string Source { get; set; }
+        public string CheckedAtUtc { get; set; }
+        public string Limitations { get; set; }
+    }
+
+    public class UacInfo
+    {
+        public string Status { get; set; }
+        public bool IsEnabled { get; set; }
+        public int ConsentPromptBehaviorAdmin { get; set; }
+        public bool PromptOnSecureDesktop { get; set; }
+        public string Summary { get; set; }
+        public string Source { get; set; }
+        public string CheckedAtUtc { get; set; }
+        public string Limitations { get; set; }
+    }
+
+    public class WindowsUpdateInfo
+    {
+        public string Status { get; set; }
+        public bool IsServiceRunning { get; set; }
+        public string ServiceState { get; set; }
+        public string LastSearchSuccessDate { get; set; }
+        public string Summary { get; set; }
+        public string Source { get; set; }
+        public string CheckedAtUtc { get; set; }
+        public string Limitations { get; set; }
+    }
+
+    public class SmartScreenInfo
+    {
+        public string Status { get; set; }
+        public string SettingValue { get; set; }
+        public string Summary { get; set; }
+        public string Source { get; set; }
+        public string CheckedAtUtc { get; set; }
+        public string Limitations { get; set; }
+    }
+
+    public class ProtectionPostureSnapshot
+    {
+        public List<AntivirusInfo> AntivirusProviders { get; set; }
+        public List<FirewallProfileInfo> FirewallProfiles { get; set; }
+        public UacInfo Uac { get; set; }
+        public WindowsUpdateInfo WindowsUpdate { get; set; }
+        public SmartScreenInfo SmartScreen { get; set; }
+        public string SnapshotTimestampUtc { get; set; }
+
+        public ProtectionPostureSnapshot()
+        {
+            AntivirusProviders = new List<AntivirusInfo>();
+            FirewallProfiles = new List<FirewallProfileInfo>();
+            SnapshotTimestampUtc = DateTime.UtcNow.ToString("o");
+        }
+    }
+
     public static class JsonHelper
     {
         private static readonly JavaScriptSerializer Serializer = new JavaScriptSerializer
@@ -158,4 +237,3 @@ namespace SentinelX.Contracts
         }
     }
 }
-

@@ -125,34 +125,210 @@ class EngineHealthData {
   }
 }
 
-class StatusSnapshot {
-  final String componentKey;
+class AntivirusInfo {
+  final String displayName;
   final ComponentStatus status;
+  final bool isActive;
+  final bool isUpToDate;
+  final String productStateHex;
   final String source;
   final String checkedAtUtc;
-  final int freshnessSeconds;
   final String limitations;
-  final Map<String, dynamic> details;
 
-  StatusSnapshot({
-    required this.componentKey,
+  AntivirusInfo({
+    required this.displayName,
     required this.status,
+    required this.isActive,
+    required this.isUpToDate,
+    required this.productStateHex,
     required this.source,
     required this.checkedAtUtc,
-    required this.freshnessSeconds,
     required this.limitations,
-    required this.details,
   });
 
-  factory StatusSnapshot.fromJson(Map<String, dynamic> json) {
-    return StatusSnapshot(
-      componentKey: json['componentKey'] as String? ?? '',
-      status: ComponentStatus.fromString(json['status'] as String?),
-      source: json['source'] as String? ?? 'Windows API',
-      checkedAtUtc: json['checkedAtUtc'] as String? ?? '',
-      freshnessSeconds: (json['freshnessSeconds'] as num?)?.toInt() ?? 60,
-      limitations: json['limitations'] as String? ?? '',
-      details: json['details'] != null ? Map<String, dynamic>.from(json['details'] as Map) : {},
+  factory AntivirusInfo.fromJson(Map<String, dynamic> json) {
+    return AntivirusInfo(
+      displayName: json['DisplayName'] as String? ?? 'Unknown Antivirus',
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      isActive: json['IsActive'] as bool? ?? false,
+      isUpToDate: json['IsUpToDate'] as bool? ?? false,
+      productStateHex: json['ProductStateHex'] as String? ?? 'Unknown',
+      source: json['Source'] as String? ?? 'Windows Security Center',
+      checkedAtUtc: json['CheckedAtUtc'] as String? ?? '',
+      limitations: json['Limitations'] as String? ?? '',
+    );
+  }
+}
+
+class FirewallProfileInfo {
+  final String profileName;
+  final ComponentStatus status;
+  final bool isEnabled;
+  final String inboundAction;
+  final String outboundAction;
+  final String source;
+  final String checkedAtUtc;
+  final String limitations;
+
+  FirewallProfileInfo({
+    required this.profileName,
+    required this.status,
+    required this.isEnabled,
+    required this.inboundAction,
+    required this.outboundAction,
+    required this.source,
+    required this.checkedAtUtc,
+    required this.limitations,
+  });
+
+  factory FirewallProfileInfo.fromJson(Map<String, dynamic> json) {
+    return FirewallProfileInfo(
+      profileName: json['ProfileName'] as String? ?? '',
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      isEnabled: json['IsEnabled'] as bool? ?? false,
+      inboundAction: json['InboundAction'] as String? ?? 'Block',
+      outboundAction: json['OutboundAction'] as String? ?? 'Allow',
+      source: json['Source'] as String? ?? 'NetFwTypeLib',
+      checkedAtUtc: json['CheckedAtUtc'] as String? ?? '',
+      limitations: json['Limitations'] as String? ?? '',
+    );
+  }
+}
+
+class UacInfo {
+  final ComponentStatus status;
+  final bool isEnabled;
+  final int consentPromptBehaviorAdmin;
+  final bool promptOnSecureDesktop;
+  final String summary;
+  final String source;
+  final String checkedAtUtc;
+  final String limitations;
+
+  UacInfo({
+    required this.status,
+    required this.isEnabled,
+    required this.consentPromptBehaviorAdmin,
+    required this.promptOnSecureDesktop,
+    required this.summary,
+    required this.source,
+    required this.checkedAtUtc,
+    required this.limitations,
+  });
+
+  factory UacInfo.fromJson(Map<String, dynamic> json) {
+    return UacInfo(
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      isEnabled: json['IsEnabled'] as bool? ?? false,
+      consentPromptBehaviorAdmin: (json['ConsentPromptBehaviorAdmin'] as num?)?.toInt() ?? 5,
+      promptOnSecureDesktop: json['PromptOnSecureDesktop'] as bool? ?? true,
+      summary: json['Summary'] as String? ?? 'UAC Enabled',
+      source: json['Source'] as String? ?? 'Registry',
+      checkedAtUtc: json['CheckedAtUtc'] as String? ?? '',
+      limitations: json['Limitations'] as String? ?? '',
+    );
+  }
+}
+
+class WindowsUpdateInfo {
+  final ComponentStatus status;
+  final bool isServiceRunning;
+  final String serviceState;
+  final String lastSearchSuccessDate;
+  final String summary;
+  final String source;
+  final String checkedAtUtc;
+  final String limitations;
+
+  WindowsUpdateInfo({
+    required this.status,
+    required this.isServiceRunning,
+    required this.serviceState,
+    required this.lastSearchSuccessDate,
+    required this.summary,
+    required this.source,
+    required this.checkedAtUtc,
+    required this.limitations,
+  });
+
+  factory WindowsUpdateInfo.fromJson(Map<String, dynamic> json) {
+    return WindowsUpdateInfo(
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      isServiceRunning: json['IsServiceRunning'] as bool? ?? false,
+      serviceState: json['ServiceState'] as String? ?? 'Unknown',
+      lastSearchSuccessDate: json['LastSearchSuccessDate'] as String? ?? 'Unknown',
+      summary: json['Summary'] as String? ?? '',
+      source: json['Source'] as String? ?? 'Windows Update Service',
+      checkedAtUtc: json['CheckedAtUtc'] as String? ?? '',
+      limitations: json['Limitations'] as String? ?? '',
+    );
+  }
+}
+
+class SmartScreenInfo {
+  final ComponentStatus status;
+  final String settingValue;
+  final String summary;
+  final String source;
+  final String checkedAtUtc;
+  final String limitations;
+
+  SmartScreenInfo({
+    required this.status,
+    required this.settingValue,
+    required this.summary,
+    required this.source,
+    required this.checkedAtUtc,
+    required this.limitations,
+  });
+
+  factory SmartScreenInfo.fromJson(Map<String, dynamic> json) {
+    return SmartScreenInfo(
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      settingValue: json['SettingValue'] as String? ?? 'Unknown',
+      summary: json['Summary'] as String? ?? '',
+      source: json['Source'] as String? ?? 'Registry',
+      checkedAtUtc: json['CheckedAtUtc'] as String? ?? '',
+      limitations: json['Limitations'] as String? ?? '',
+    );
+  }
+}
+
+class ProtectionPostureSnapshot {
+  final List<AntivirusInfo> antivirusProviders;
+  final List<FirewallProfileInfo> firewallProfiles;
+  final UacInfo? uac;
+  final WindowsUpdateInfo? windowsUpdate;
+  final SmartScreenInfo? smartScreen;
+  final String snapshotTimestampUtc;
+
+  ProtectionPostureSnapshot({
+    required this.antivirusProviders,
+    required this.firewallProfiles,
+    this.uac,
+    this.windowsUpdate,
+    this.smartScreen,
+    required this.snapshotTimestampUtc,
+  });
+
+  factory ProtectionPostureSnapshot.fromJson(Map<String, dynamic> json) {
+    return ProtectionPostureSnapshot(
+      antivirusProviders: (json['AntivirusProviders'] as List?)
+              ?.map((e) => AntivirusInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      firewallProfiles: (json['FirewallProfiles'] as List?)
+              ?.map((e) => FirewallProfileInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      uac: json['Uac'] != null ? UacInfo.fromJson(Map<String, dynamic>.from(json['Uac'] as Map)) : null,
+      windowsUpdate: json['WindowsUpdate'] != null
+          ? WindowsUpdateInfo.fromJson(Map<String, dynamic>.from(json['WindowsUpdate'] as Map))
+          : null,
+      smartScreen: json['SmartScreen'] != null
+          ? SmartScreenInfo.fromJson(Map<String, dynamic>.from(json['SmartScreen'] as Map))
+          : null,
+      snapshotTimestampUtc: json['SnapshotTimestampUtc'] as String? ?? '',
     );
   }
 }
@@ -185,4 +361,3 @@ class SessionMetadata {
     );
   }
 }
-

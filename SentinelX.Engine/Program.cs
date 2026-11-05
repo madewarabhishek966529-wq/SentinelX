@@ -27,10 +27,13 @@ namespace SentinelX.Engine
                 sessionManager = new SessionManager(logger, ContractConstants.DefaultPort);
                 sessionManager.SaveSession();
 
+                var securityService = new Services.WindowsSecurityService(logger);
+
                 var handlers = new List<IRequestHandler>
                 {
                     new PingHandler(),
-                    new HealthHandler(startedAtUtc)
+                    new HealthHandler(startedAtUtc),
+                    new ProtectionHandler(securityService)
                 };
 
                 ipcServer = new IpcServer(logger, sessionManager.CurrentSession, handlers, () =>

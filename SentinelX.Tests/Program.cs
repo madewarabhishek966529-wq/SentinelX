@@ -19,7 +19,8 @@ namespace SentinelX.Tests
                 ContractSerializationTests.Run,
                 SecurityBoundaryTests.Run,
                 HealthHandshakeTests.Run,
-                LoggerSanitizationTests.Run
+                LoggerSanitizationTests.Run,
+                ProtectionPostureTests.Run
             };
 
             foreach (var test in testSuites)

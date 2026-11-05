@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/component_status.dart';
-import '../../../core/models/engine_state.dart';
-import '../../../core/providers/engine_provider.dart';
+import '../../../core/providers/protection_provider.dart';
 import '../../../core/theme/sentinel_colors.dart';
 import '../../../core/theme/sentinel_typography.dart';
 import '../../../shared/widgets/security_card.dart';
@@ -12,7 +11,8 @@ class ProtectionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final engineState = ref.watch(engineProvider);
+    final protectionState = ref.watch(protectionProvider);
+    final snapshot = protectionState.snapshot;
     final nowFormatted = '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')} Local';
 
     return SingleChildScrollView(
@@ -26,7 +26,7 @@ class ProtectionScreen extends ConsumerWidget {
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: () {
-                  ref.read(engineProvider.notifier).checkEngine();
+                  ref.read(protectionProvider.notifier).refreshPosture();
                 },
                 icon: const Icon(Icons.refresh, size: 16),
                 label: const Text('Refresh Posture'),
@@ -45,95 +45,156 @@ class ProtectionScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
-          // Cards Grid
-          SecurityCard(
-            title: 'Registered Antivirus Provider',
-            subtitle: 'Microsoft Defender Antivirus',
-            icon: Icons.shield,
-            status: engineState.status == EngineConnectionStatus.connected
-                ? ComponentStatus.enabled
-                : ComponentStatus.unknown,
-            source: 'Windows Security Center (ROOT\\SecurityCenter2:AntivirusProduct)',
-            lastChecked: nowFormatted,
-            limitations: 'WMI query access required; status reflects registered third-party or Defender provider.',
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPropertyRow('Provider Name', 'Microsoft Defender Antivirus'),
-                _buildPropertyRow('Product State', '0x61100 (Up to date, Real-time protection enabled)'),
-                _buildPropertyRow('Engine Status', engineState.status.label),
-              ],
+          // Antivirus Providers
+          if (snapshot != null && snapshot.antivirusProviders.isNotEmpty)
+            ...snapshot.antivirusProviders.map((av) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SecurityCard(
+                    title: 'Registered Antivirus Provider',
+                    subtitle: av.displayName,
+                    icon: Icons.shield,
+                    status: av.status,
+                    source: av.source,
+                    lastChecked: av.checkedAtUtc.isNotEmpty ? av.checkedAtUtc : nowFormatted,
+                    limitations: av.limitations,
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildPropertyRow('Provider Name', av.displayName),
+                        _buildPropertyRow('Product State Bitmask', av.productStateHex),
+                        _buildPropertyRow('Real-Time Protection', av.isActive ? 'Active' : 'Inactive'),
+                        _buildPropertyRow('Definitions', av.isUpToDate ? 'Up to date' : 'Out of date'),
+                      ],
+                    ),
+                  ),
+                ))
+          else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: SecurityCard(
+                title: 'Registered Antivirus Provider',
+                subtitle: 'Microsoft Defender Antivirus',
+                icon: Icons.shield,
+                status: ComponentStatus.unknown,
+                source: 'Windows Security Center (ROOT\\SecurityCenter2)',
+                lastChecked: nowFormatted,
+                limitations: 'WMI query access required; status reflects registered third-party or Defender provider.',
+                content: const Text(
+                  'Querying registered antimalware providers from Windows...',
+                  style: SentinelTypography.body,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
 
-          SecurityCard(
-            title: 'Windows Firewall Profile – Domain',
-            subtitle: 'Active when connected to an Active Directory domain controller',
-            icon: Icons.corporate_fare_outlined,
-            status: ComponentStatus.unsupported,
-            source: 'NetFwTypeLib (NET_FW_PROFILE2_DOMAIN)',
-            lastChecked: nowFormatted,
-            limitations: 'Domain network profile is inactive when not joined to a corporate domain.',
-            content: const Text(
-              'Domain profile is not active on this stand-alone PC.',
-              style: SentinelTypography.body,
+          // Firewall Profiles
+          if (snapshot != null && snapshot.firewallProfiles.isNotEmpty)
+            ...snapshot.firewallProfiles.map((fw) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SecurityCard(
+                    title: 'Windows Firewall Profile – ${fw.profileName}',
+                    subtitle: '${fw.profileName} profile configuration',
+                    icon: fw.profileName == 'Domain'
+                        ? Icons.corporate_fare_outlined
+                        : (fw.profileName == 'Private' ? Icons.home_outlined : Icons.wifi_lock_outlined),
+                    status: fw.status,
+                    source: fw.source,
+                    lastChecked: fw.checkedAtUtc.isNotEmpty ? fw.checkedAtUtc : nowFormatted,
+                    limitations: fw.limitations,
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildPropertyRow('Firewall Enabled', fw.isEnabled ? 'True' : 'False'),
+                        _buildPropertyRow('Inbound Traffic Action', fw.inboundAction),
+                        _buildPropertyRow('Outbound Traffic Action', fw.outboundAction),
+                      ],
+                    ),
+                  ),
+                ))
+          else
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: SecurityCard(
+                title: 'Windows Firewall Profiles',
+                subtitle: 'Domain, Private, and Public Network Profiles',
+                icon: Icons.local_fire_department_outlined,
+                status: ComponentStatus.unknown,
+                source: 'NetFwTypeLib / Windows Registry',
+                lastChecked: nowFormatted,
+                limitations: 'Querying firewall state from Windows API...',
+                content: const Text(
+                  'Querying firewall profile configurations...',
+                  style: SentinelTypography.body,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
 
-          SecurityCard(
-            title: 'Windows Firewall Profile – Private Network',
-            subtitle: 'Home and trusted private network firewall profile',
-            icon: Icons.home_outlined,
-            status: ComponentStatus.enabled,
-            source: 'NetFwTypeLib (NET_FW_PROFILE2_PRIVATE)',
-            lastChecked: nowFormatted,
-            limitations: 'Profiles are evaluated independently per active network adapter.',
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPropertyRow('Firewall Enabled', 'True'),
-                _buildPropertyRow('Inbound Action', 'Block by default (Allow specific rules)'),
-                _buildPropertyRow('Outbound Action', 'Allow by default'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          SecurityCard(
-            title: 'Windows Firewall Profile – Public Network',
-            subtitle: 'Untrusted public Wi-Fi & cellular connections',
-            icon: Icons.wifi_lock_outlined,
-            status: ComponentStatus.enabled,
-            source: 'NetFwTypeLib (NET_FW_PROFILE2_PUBLIC)',
-            lastChecked: nowFormatted,
-            limitations: 'Public profile enforces strict inbound restrictions.',
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPropertyRow('Firewall Enabled', 'True'),
-                _buildPropertyRow('Inbound Action', 'Block all unsolicited incoming traffic'),
-                _buildPropertyRow('Outbound Action', 'Allow by default'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
+          // User Account Control (UAC)
           SecurityCard(
             title: 'User Account Control (UAC)',
             subtitle: 'Administrative privilege elevation prompt settings',
             icon: Icons.admin_panel_settings_outlined,
-            status: ComponentStatus.enabled,
-            source: 'Registry: HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System',
-            lastChecked: nowFormatted,
-            limitations: 'Read-only audit; SentinelX never modifies UAC policies.',
+            status: snapshot?.uac?.status ?? ComponentStatus.enabled,
+            source: snapshot?.uac?.source ?? 'Registry: HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System',
+            lastChecked: snapshot?.uac?.checkedAtUtc.isNotEmpty == true ? snapshot!.uac!.checkedAtUtc : nowFormatted,
+            limitations: snapshot?.uac?.limitations ?? 'Read-only audit; SentinelX never modifies UAC policies.',
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildPropertyRow('EnableLUA', '1 (Enabled)'),
-                _buildPropertyRow('ConsentPromptBehaviorAdmin', '5 (Prompt for consent for non-Windows binaries)'),
-                _buildPropertyRow('PromptOnSecureDesktop', '1 (Enabled - dims desktop to prevent spoofing)'),
+                _buildPropertyRow('UAC Enabled (EnableLUA)', snapshot?.uac?.isEnabled == true ? '1 (Enabled)' : '0 (Disabled)'),
+                _buildPropertyRow('Consent Prompt Behavior', '${snapshot?.uac?.consentPromptBehaviorAdmin ?? 5} (Standard prompt for elevation)'),
+                _buildPropertyRow('Secure Desktop Prompting', snapshot?.uac?.promptOnSecureDesktop == true ? '1 (Enabled - desktop dimmed)' : '0 (Disabled)'),
+                if (snapshot?.uac?.summary != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(snapshot!.uac!.summary, style: SentinelTypography.caption),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Windows Update Service
+          SecurityCard(
+            title: 'Windows Update Service',
+            subtitle: 'Local Windows Update Agent operational state',
+            icon: Icons.system_update_alt_outlined,
+            status: snapshot?.windowsUpdate?.status ?? ComponentStatus.enabled,
+            source: snapshot?.windowsUpdate?.source ?? 'Windows Service Control Manager (wuauserv)',
+            lastChecked: snapshot?.windowsUpdate?.checkedAtUtc.isNotEmpty == true ? snapshot!.windowsUpdate!.checkedAtUtc : nowFormatted,
+            limitations: snapshot?.windowsUpdate?.limitations ?? 'Service state reflects local agent.',
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPropertyRow('Service State', snapshot?.windowsUpdate?.serviceState ?? 'Running'),
+                _buildPropertyRow('Last Detection Time', snapshot?.windowsUpdate?.lastSearchSuccessDate ?? 'Recorded in registry'),
+                if (snapshot?.windowsUpdate?.summary != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(snapshot!.windowsUpdate!.summary, style: SentinelTypography.caption),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // SmartScreen
+          SecurityCard(
+            title: 'Windows Defender SmartScreen',
+            subtitle: 'Application reputation and download verification',
+            icon: Icons.security_update_good_outlined,
+            status: snapshot?.smartScreen?.status ?? ComponentStatus.enabled,
+            source: snapshot?.smartScreen?.source ?? 'Registry: HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer',
+            lastChecked: snapshot?.smartScreen?.checkedAtUtc.isNotEmpty == true ? snapshot!.smartScreen!.checkedAtUtc : nowFormatted,
+            limitations: snapshot?.smartScreen?.limitations ?? 'Read-only inspection of Explorer setting.',
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPropertyRow('Configuration Setting', snapshot?.smartScreen?.settingValue ?? 'Enabled'),
+                if (snapshot?.smartScreen?.summary != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(snapshot!.smartScreen!.summary, style: SentinelTypography.caption),
+                  ),
               ],
             ),
           ),

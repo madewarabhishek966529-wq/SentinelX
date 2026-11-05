@@ -20,6 +20,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SentinelX.Contracts\SentinelX.Contracts.csproj">
@@ -35,6 +37,8 @@
     <Compile Include="Handlers\IRequestHandler.cs" />
     <Compile Include="Handlers\PingHandler.cs" />
     <Compile Include="Handlers\HealthHandler.cs" />
+    <Compile Include="Handlers\ProtectionHandler.cs" />
+    <Compile Include="Services\WindowsSecurityService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
