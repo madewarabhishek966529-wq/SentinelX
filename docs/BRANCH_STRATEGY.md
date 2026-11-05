@@ -19,3 +19,4 @@
 4. C# Engine unit tests: All IPC contract, security boundary, and serialization tests must pass.
 5. Traceability matrix: Updated in `docs/REQUIREMENTS_TRACEABILITY.md` before merging each stage.
 6. Defensive boundaries check: No offensive capabilities, no fake metrics, no bypasses.
+

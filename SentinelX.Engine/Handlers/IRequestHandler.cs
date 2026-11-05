@@ -8,3 +8,4 @@ namespace SentinelX.Engine.Handlers
         IpcResponse<object> Handle(IpcRequest request);
     }
 }
+

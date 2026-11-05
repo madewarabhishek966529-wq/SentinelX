@@ -60,3 +60,4 @@ class SentinelTypography {
     color: SentinelColors.primary,
   );
 }
+

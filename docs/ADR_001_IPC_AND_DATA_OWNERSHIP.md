@@ -65,3 +65,4 @@ Missing data is never mapped to "Safe" or "Enabled". No artificial 0-100 "Securi
 - Clean separation of UI and low-level Windows APIs.
 - Predictable, testable contracts between Flutter and C#.
 - Complete defense-in-depth against remote access or unauthorized local processes.
+

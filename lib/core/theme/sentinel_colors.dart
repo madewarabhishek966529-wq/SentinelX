@@ -40,3 +40,4 @@ class SentinelColors {
   // 7. Stale
   static const Color statusStale = Color(0xFFA8A29E); // Stone Gray
 }
+

@@ -31,3 +31,4 @@ SentinelX is a defensive, local-first Windows security visibility and hygiene de
 - Label unknown devices discovered on the authorized home network as **"Unknown device"**, never "Intruder".
 - Label modified monitored files as **"File changed"**, never "Infected".
 - Label unavailable security checks as **"Check unavailable"**, never "System Secure".
+

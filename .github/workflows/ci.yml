@@ -36,3 +36,4 @@ jobs:
       - name: Run Engine Tests
         run: |
           .\SentinelX.Tests\bin\Release\SentinelX.Tests.exe
+
