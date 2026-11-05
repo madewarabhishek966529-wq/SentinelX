@@ -150,3 +150,4 @@ class RecommendationReportNotifier extends Notifier<RecommendationReportState> {
     }
   }
 }
+
