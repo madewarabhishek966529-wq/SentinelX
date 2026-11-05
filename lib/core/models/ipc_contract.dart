@@ -125,6 +125,7 @@ class EngineHealthData {
   }
 }
 
+// Stage 2 Models
 class AntivirusInfo {
   final String displayName;
   final ComponentStatus status;
@@ -329,6 +330,141 @@ class ProtectionPostureSnapshot {
           ? SmartScreenInfo.fromJson(Map<String, dynamic>.from(json['SmartScreen'] as Map))
           : null,
       snapshotTimestampUtc: json['SnapshotTimestampUtc'] as String? ?? '',
+    );
+  }
+}
+
+// Stage 3 Models
+class DriveInfoItem {
+  final String name;
+  final String driveType;
+  final int totalBytes;
+  final int freeBytes;
+  final bool isReady;
+
+  DriveInfoItem({
+    required this.name,
+    required this.driveType,
+    required this.totalBytes,
+    required this.freeBytes,
+    required this.isReady,
+  });
+
+  factory DriveInfoItem.fromJson(Map<String, dynamic> json) {
+    return DriveInfoItem(
+      name: json['Name'] as String? ?? '',
+      driveType: json['DriveType'] as String? ?? 'Fixed',
+      totalBytes: (json['TotalBytes'] as num?)?.toInt() ?? 0,
+      freeBytes: (json['FreeBytes'] as num?)?.toInt() ?? 0,
+      isReady: json['IsReady'] as bool? ?? false,
+    );
+  }
+}
+
+class DeviceInventorySnapshot {
+  final String osVersion;
+  final String machineName;
+  final String manufacturer;
+  final String model;
+  final int processorCount;
+  final int totalMemoryBytes;
+  final List<DriveInfoItem> drives;
+  final String snapshotTimestampUtc;
+
+  DeviceInventorySnapshot({
+    required this.osVersion,
+    required this.machineName,
+    required this.manufacturer,
+    required this.model,
+    required this.processorCount,
+    required this.totalMemoryBytes,
+    required this.drives,
+    required this.snapshotTimestampUtc,
+  });
+
+  factory DeviceInventorySnapshot.fromJson(Map<String, dynamic> json) {
+    return DeviceInventorySnapshot(
+      osVersion: json['OsVersion'] as String? ?? '',
+      machineName: json['MachineName'] as String? ?? '',
+      manufacturer: json['Manufacturer'] as String? ?? 'Generic PC',
+      model: json['Model'] as String? ?? 'Windows Device',
+      processorCount: (json['ProcessorCount'] as num?)?.toInt() ?? 1,
+      totalMemoryBytes: (json['TotalMemoryBytes'] as num?)?.toInt() ?? 0,
+      drives: (json['Drives'] as List?)
+              ?.map((e) => DriveInfoItem.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      snapshotTimestampUtc: json['SnapshotTimestampUtc'] as String? ?? '',
+    );
+  }
+}
+
+class ProcessItem {
+  final int processId;
+  final String processName;
+  final String startTimeUtc;
+  final String compositeKey;
+  final String executablePath;
+  final String publisher;
+  final ComponentStatus publisherStatus;
+  final int workingSetBytes;
+  final double cpuPercent;
+  final bool accessDenied;
+
+  ProcessItem({
+    required this.processId,
+    required this.processName,
+    required this.startTimeUtc,
+    required this.compositeKey,
+    required this.executablePath,
+    required this.publisher,
+    required this.publisherStatus,
+    required this.workingSetBytes,
+    required this.cpuPercent,
+    required this.accessDenied,
+  });
+
+  factory ProcessItem.fromJson(Map<String, dynamic> json) {
+    return ProcessItem(
+      processId: (json['ProcessId'] as num?)?.toInt() ?? 0,
+      processName: json['ProcessName'] as String? ?? '',
+      startTimeUtc: json['StartTimeUtc'] as String? ?? '',
+      compositeKey: json['CompositeKey'] as String? ?? '',
+      executablePath: json['ExecutablePath'] as String? ?? '',
+      publisher: json['Publisher'] as String? ?? 'Unverified Publisher',
+      publisherStatus: ComponentStatus.fromString(json['PublisherStatus'] as String?),
+      workingSetBytes: (json['WorkingSetBytes'] as num?)?.toInt() ?? 0,
+      cpuPercent: (json['CpuPercent'] as num?)?.toDouble() ?? 0.0,
+      accessDenied: json['AccessDenied'] as bool? ?? false,
+    );
+  }
+}
+
+class StartupItem {
+  final String stableKey;
+  final String displayName;
+  final String executablePath;
+  final String publisher;
+  final String sourceLocation;
+  final ComponentStatus status;
+
+  StartupItem({
+    required this.stableKey,
+    required this.displayName,
+    required this.executablePath,
+    required this.publisher,
+    required this.sourceLocation,
+    required this.status,
+  });
+
+  factory StartupItem.fromJson(Map<String, dynamic> json) {
+    return StartupItem(
+      stableKey: json['StableKey'] as String? ?? '',
+      displayName: json['DisplayName'] as String? ?? '',
+      executablePath: json['ExecutablePath'] as String? ?? '',
+      publisher: json['Publisher'] as String? ?? '',
+      sourceLocation: json['SourceLocation'] as String? ?? '',
+      status: ComponentStatus.fromString(json['Status'] as String?),
     );
   }
 }

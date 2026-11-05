@@ -149,7 +149,7 @@ namespace SentinelX.Contracts
 
     public class FirewallProfileInfo
     {
-        public string ProfileName { get; set; } // "Domain", "Private", "Public"
+        public string ProfileName { get; set; }
         public string Status { get; set; }
         public bool IsEnabled { get; set; }
         public string InboundAction { get; set; }
@@ -208,6 +208,61 @@ namespace SentinelX.Contracts
             FirewallProfiles = new List<FirewallProfileInfo>();
             SnapshotTimestampUtc = DateTime.UtcNow.ToString("o");
         }
+    }
+
+    // ==========================================
+    // STAGE 3: Device, Process & Startup Contracts
+    // ==========================================
+
+    public class DriveInfoItem
+    {
+        public string Name { get; set; }
+        public string DriveType { get; set; }
+        public long TotalBytes { get; set; }
+        public long FreeBytes { get; set; }
+        public bool IsReady { get; set; }
+    }
+
+    public class DeviceInventorySnapshot
+    {
+        public string OsVersion { get; set; }
+        public string MachineName { get; set; }
+        public string Manufacturer { get; set; }
+        public string Model { get; set; }
+        public int ProcessorCount { get; set; }
+        public long TotalMemoryBytes { get; set; }
+        public List<DriveInfoItem> Drives { get; set; }
+        public string SnapshotTimestampUtc { get; set; }
+
+        public DeviceInventorySnapshot()
+        {
+            Drives = new List<DriveInfoItem>();
+            SnapshotTimestampUtc = DateTime.UtcNow.ToString("o");
+        }
+    }
+
+    public class ProcessItem
+    {
+        public int ProcessId { get; set; }
+        public string ProcessName { get; set; }
+        public string StartTimeUtc { get; set; }
+        public string CompositeKey { get; set; } // PID + StartTimeUtc (Handles PID reuse)
+        public string ExecutablePath { get; set; }
+        public string Publisher { get; set; }
+        public string PublisherStatus { get; set; } // ComponentStatus string
+        public long WorkingSetBytes { get; set; }
+        public double CpuPercent { get; set; }
+        public bool AccessDenied { get; set; }
+    }
+
+    public class StartupItem
+    {
+        public string StableKey { get; set; }
+        public string DisplayName { get; set; }
+        public string ExecutablePath { get; set; }
+        public string Publisher { get; set; }
+        public string SourceLocation { get; set; }
+        public string Status { get; set; } // ComponentStatus string
     }
 
     public static class JsonHelper

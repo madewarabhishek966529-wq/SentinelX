@@ -28,12 +28,14 @@ namespace SentinelX.Engine
                 sessionManager.SaveSession();
 
                 var securityService = new Services.WindowsSecurityService(logger);
+                var deviceProcessService = new Services.DeviceProcessService(logger);
 
                 var handlers = new List<IRequestHandler>
                 {
                     new PingHandler(),
                     new HealthHandler(startedAtUtc),
-                    new ProtectionHandler(securityService)
+                    new ProtectionHandler(securityService),
+                    new DeviceProcessHandler(deviceProcessService)
                 };
 
                 ipcServer = new IpcServer(logger, sessionManager.CurrentSession, handlers, () =>

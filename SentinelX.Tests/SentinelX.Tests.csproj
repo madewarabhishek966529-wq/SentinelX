@@ -37,6 +37,7 @@
     <Compile Include="Tests\HealthHandshakeTests.cs" />
     <Compile Include="Tests\LoggerSanitizationTests.cs" />
     <Compile Include="Tests\ProtectionPostureTests.cs" />
+    <Compile Include="Tests\DeviceProcessTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
