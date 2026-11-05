@@ -1,0 +1,38 @@
+name: SentinelX CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  flutter-desktop-check:
+    name: Flutter Lint & Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze code
+        run: flutter analyze
+      - name: Run unit & widget tests
+        run: flutter test
+
+  engine-check:
+    name: C# Engine & Contracts Build & Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Build C# Solutions
+        run: |
+          & "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" SentinelX.sln /p:Configuration=Release
+      - name: Run Engine Tests
+        run: |
+          .\SentinelX.Tests\bin\Release\SentinelX.Tests.exe

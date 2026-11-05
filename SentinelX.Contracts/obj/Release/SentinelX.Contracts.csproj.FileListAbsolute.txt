@@ -1,0 +1,4 @@
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Contracts\bin\Release\SentinelX.Contracts.dll
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Contracts\obj\Release\SentinelX.Contracts.csproj.AssemblyReference.cache
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Contracts\obj\Release\SentinelX.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Contracts\obj\Release\SentinelX.Contracts.dll

@@ -1,0 +1,6 @@
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Engine\bin\Release\SentinelX.Engine.exe
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Engine\bin\Release\SentinelX.Contracts.dll
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Engine\obj\Release\SentinelX.Engine.csproj.AssemblyReference.cache
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Engine\obj\Release\SentinelX.Engine.csproj.CoreCompileInputs.cache
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Engine\obj\Release\Sentinel.AD1DF79E.Up2Date
+C:\Users\madew\Desktop\Git Project\Flutter Projects git\sentinelx\SentinelX.Engine\obj\Release\SentinelX.Engine.exe

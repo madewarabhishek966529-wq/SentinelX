@@ -1,0 +1,41 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D3C67E55-6B49-4F24-A947-9DF1C2F82F00}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SentinelX.Tests</RootNamespace>
+    <AssemblyName>SentinelX.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FrameworkPathOverride>C:\Windows\Microsoft.NET\Framework64\v4.0.30319</FrameworkPathOverride>
+    <FileAlignment>512</FileAlignment>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SentinelX.Contracts\SentinelX.Contracts.csproj">
+      <Project>{B1A45C33-4927-4EE2-A625-7BE0A0F60D88}</Project>
+      <Name>SentinelX.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SentinelX.Engine\SentinelX.Engine.csproj">
+      <Project>{C2B56D44-5A38-4F13-B836-8CF1B1F71E99}</Project>
+      <Name>SentinelX.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Tests\ContractSerializationTests.cs" />
+    <Compile Include="Tests\SecurityBoundaryTests.cs" />
+    <Compile Include="Tests\HealthHandshakeTests.cs" />
+    <Compile Include="Tests\LoggerSanitizationTests.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
