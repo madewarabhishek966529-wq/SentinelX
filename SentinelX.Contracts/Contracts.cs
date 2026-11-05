@@ -318,6 +318,120 @@ namespace SentinelX.Contracts
         }
     }
 
+    // ==========================================
+    // STAGE 5: File Integrity & Security Alerts
+    // ==========================================
+
+    public class FimTargetItem
+    {
+        public string TargetId { get; set; }
+        public string CanonicalPath { get; set; }
+        public string UserLabel { get; set; }
+        public string BaselineSha256 { get; set; }
+        public string CurrentSha256 { get; set; }
+        public long SizeBytes { get; set; }
+        public string CreatedAtUtc { get; set; }
+        public string LastCheckedUtc { get; set; }
+        public string Status { get; set; } // ComponentStatus
+        public bool HasChanged { get; set; }
+        public string ChangeSummary { get; set; }
+    }
+
+    public class FimChangeEvent
+    {
+        public string EventId { get; set; }
+        public string TargetId { get; set; }
+        public string CanonicalPath { get; set; }
+        public string ChangeType { get; set; } // "Modified", "Deleted", "Created", "Renamed"
+        public string OldHash { get; set; }
+        public string NewHash { get; set; }
+        public string DetectedAtUtc { get; set; }
+        public string Severity { get; set; } // "Warning", "Critical", "Info"
+    }
+
+    public class FimSnapshot
+    {
+        public List<FimTargetItem> Targets { get; set; }
+        public List<FimChangeEvent> RecentChanges { get; set; }
+        public bool IsMonitoring { get; set; }
+        public string SnapshotTimestampUtc { get; set; }
+
+        public FimSnapshot()
+        {
+            Targets = new List<FimTargetItem>();
+            RecentChanges = new List<FimChangeEvent>();
+            SnapshotTimestampUtc = DateTime.UtcNow.ToString("o");
+        }
+    }
+
+    public class SecurityEventItem
+    {
+        public long RecordId { get; set; }
+        public int EventId { get; set; }
+        public string Channel { get; set; }
+        public string ProviderName { get; set; }
+        public string LevelDisplayName { get; set; }
+        public string TimestampUtc { get; set; }
+        public string Message { get; set; }
+        public bool AccessDenied { get; set; }
+        public string Status { get; set; } // ComponentStatus
+    }
+
+    public class SecurityEventsSnapshot
+    {
+        public List<SecurityEventItem> Events { get; set; }
+        public string ChannelSummary { get; set; }
+        public string SnapshotTimestampUtc { get; set; }
+
+        public SecurityEventsSnapshot()
+        {
+            Events = new List<SecurityEventItem>();
+            SnapshotTimestampUtc = DateTime.UtcNow.ToString("o");
+        }
+    }
+
+    // ==========================================
+    // STAGE 6: Recommendations & System Reports
+    // ==========================================
+
+    public class SecurityRecommendationItem
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Category { get; set; } // "Protection", "Device", "Network", "Integrity", "Account"
+        public string Priority { get; set; } // "High", "Medium", "Low", "Info"
+        public string Status { get; set; }
+        public string Evidence { get; set; }
+        public string Source { get; set; }
+        public string TimestampUtc { get; set; }
+        public string Limitations { get; set; }
+        public string ActionUri { get; set; }
+        public string ActionLabel { get; set; }
+    }
+
+    public class SystemReportData
+    {
+        public string ReportId { get; set; }
+        public string GeneratedAtUtc { get; set; }
+        public string MachineName { get; set; }
+        public string OsVersion { get; set; }
+        public ProtectionPostureSnapshot Posture { get; set; }
+        public DeviceInventorySnapshot Inventory { get; set; }
+        public NetworkActivitySnapshot Network { get; set; }
+        public List<SecurityRecommendationItem> Recommendations { get; set; }
+        public string CompletedChecksSummary { get; set; }
+        public string UnavailableChecksSummary { get; set; }
+        public string Disclaimer { get; set; }
+
+        public SystemReportData()
+        {
+            Recommendations = new List<SecurityRecommendationItem>();
+            GeneratedAtUtc = DateTime.UtcNow.ToString("o");
+            Disclaimer = "SentinelX is a local-first defensive visibility and posture auditing tool. " +
+                         "Reports represent point-in-time observational state and do not guarantee the absence of unknown vulnerabilities or threats.";
+        }
+    }
+
     public static class JsonHelper
     {
         private static readonly JavaScriptSerializer Serializer = new JavaScriptSerializer

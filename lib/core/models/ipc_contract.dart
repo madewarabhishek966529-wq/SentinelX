@@ -584,6 +584,274 @@ class NetworkActivitySnapshot {
   }
 }
 
+// Stage 5 Models
+class FimTargetItem {
+  final String targetId;
+  final String canonicalPath;
+  final String userLabel;
+  final String baselineSha256;
+  final String currentSha256;
+  final int sizeBytes;
+  final String createdAtUtc;
+  final String lastCheckedUtc;
+  final ComponentStatus status;
+  final bool hasChanged;
+  final String changeSummary;
+
+  FimTargetItem({
+    required this.targetId,
+    required this.canonicalPath,
+    required this.userLabel,
+    required this.baselineSha256,
+    required this.currentSha256,
+    required this.sizeBytes,
+    required this.createdAtUtc,
+    required this.lastCheckedUtc,
+    required this.status,
+    required this.hasChanged,
+    required this.changeSummary,
+  });
+
+  factory FimTargetItem.fromJson(Map<String, dynamic> json) {
+    return FimTargetItem(
+      targetId: json['TargetId'] as String? ?? '',
+      canonicalPath: json['CanonicalPath'] as String? ?? '',
+      userLabel: json['UserLabel'] as String? ?? '',
+      baselineSha256: json['BaselineSha256'] as String? ?? '',
+      currentSha256: json['CurrentSha256'] as String? ?? '',
+      sizeBytes: (json['SizeBytes'] as num?)?.toInt() ?? 0,
+      createdAtUtc: json['CreatedAtUtc'] as String? ?? '',
+      lastCheckedUtc: json['LastCheckedUtc'] as String? ?? '',
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      hasChanged: json['HasChanged'] as bool? ?? false,
+      changeSummary: json['ChangeSummary'] as String? ?? '',
+    );
+  }
+}
+
+class FimChangeEvent {
+  final String eventId;
+  final String targetId;
+  final String canonicalPath;
+  final String changeType;
+  final String oldHash;
+  final String newHash;
+  final String detectedAtUtc;
+  final String severity;
+
+  FimChangeEvent({
+    required this.eventId,
+    required this.targetId,
+    required this.canonicalPath,
+    required this.changeType,
+    required this.oldHash,
+    required this.newHash,
+    required this.detectedAtUtc,
+    required this.severity,
+  });
+
+  factory FimChangeEvent.fromJson(Map<String, dynamic> json) {
+    return FimChangeEvent(
+      eventId: json['EventId'] as String? ?? '',
+      targetId: json['TargetId'] as String? ?? '',
+      canonicalPath: json['CanonicalPath'] as String? ?? '',
+      changeType: json['ChangeType'] as String? ?? 'Modified',
+      oldHash: json['OldHash'] as String? ?? '',
+      newHash: json['NewHash'] as String? ?? '',
+      detectedAtUtc: json['DetectedAtUtc'] as String? ?? '',
+      severity: json['Severity'] as String? ?? 'Warning',
+    );
+  }
+}
+
+class FimSnapshot {
+  final List<FimTargetItem> targets;
+  final List<FimChangeEvent> recentChanges;
+  final bool isMonitoring;
+  final String snapshotTimestampUtc;
+
+  FimSnapshot({
+    required this.targets,
+    required this.recentChanges,
+    required this.isMonitoring,
+    required this.snapshotTimestampUtc,
+  });
+
+  factory FimSnapshot.fromJson(Map<String, dynamic> json) {
+    return FimSnapshot(
+      targets: (json['Targets'] as List?)
+              ?.map((e) => FimTargetItem.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      recentChanges: (json['RecentChanges'] as List?)
+              ?.map((e) => FimChangeEvent.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      isMonitoring: json['IsMonitoring'] as bool? ?? false,
+      snapshotTimestampUtc: json['SnapshotTimestampUtc'] as String? ?? '',
+    );
+  }
+}
+
+class SecurityEventItem {
+  final int recordId;
+  final int eventId;
+  final String channel;
+  final String providerName;
+  final String levelDisplayName;
+  final String timestampUtc;
+  final String message;
+  final bool accessDenied;
+  final ComponentStatus status;
+
+  SecurityEventItem({
+    required this.recordId,
+    required this.eventId,
+    required this.channel,
+    required this.providerName,
+    required this.levelDisplayName,
+    required this.timestampUtc,
+    required this.message,
+    required this.accessDenied,
+    required this.status,
+  });
+
+  factory SecurityEventItem.fromJson(Map<String, dynamic> json) {
+    return SecurityEventItem(
+      recordId: (json['RecordId'] as num?)?.toInt() ?? 0,
+      eventId: (json['EventId'] as num?)?.toInt() ?? 0,
+      channel: json['Channel'] as String? ?? '',
+      providerName: json['ProviderName'] as String? ?? '',
+      levelDisplayName: json['LevelDisplayName'] as String? ?? 'Information',
+      timestampUtc: json['TimestampUtc'] as String? ?? '',
+      message: json['Message'] as String? ?? '',
+      accessDenied: json['AccessDenied'] as bool? ?? false,
+      status: ComponentStatus.fromString(json['Status'] as String?),
+    );
+  }
+}
+
+class SecurityEventsSnapshot {
+  final List<SecurityEventItem> events;
+  final String channelSummary;
+  final String snapshotTimestampUtc;
+
+  SecurityEventsSnapshot({
+    required this.events,
+    required this.channelSummary,
+    required this.snapshotTimestampUtc,
+  });
+
+  factory SecurityEventsSnapshot.fromJson(Map<String, dynamic> json) {
+    return SecurityEventsSnapshot(
+      events: (json['Events'] as List?)
+              ?.map((e) => SecurityEventItem.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      channelSummary: json['ChannelSummary'] as String? ?? '',
+      snapshotTimestampUtc: json['SnapshotTimestampUtc'] as String? ?? '',
+    );
+  }
+}
+
+// Stage 6 Models
+class SecurityRecommendationItem {
+  final String id;
+  final String title;
+  final String category;
+  final String priority;
+  final ComponentStatus status;
+  final String evidence;
+  final String source;
+  final String timestampUtc;
+  final String limitations;
+  final String actionUri;
+  final String actionLabel;
+
+  SecurityRecommendationItem({
+    required this.id,
+    required this.title,
+    required this.category,
+    required this.priority,
+    required this.status,
+    required this.evidence,
+    required this.source,
+    required this.timestampUtc,
+    required this.limitations,
+    required this.actionUri,
+    required this.actionLabel,
+  });
+
+  factory SecurityRecommendationItem.fromJson(Map<String, dynamic> json) {
+    return SecurityRecommendationItem(
+      id: json['Id'] as String? ?? '',
+      title: json['Title'] as String? ?? '',
+      category: json['Category'] as String? ?? 'Protection',
+      priority: json['Priority'] as String? ?? 'Medium',
+      status: ComponentStatus.fromString(json['Status'] as String?),
+      evidence: json['Evidence'] as String? ?? '',
+      source: json['Source'] as String? ?? '',
+      timestampUtc: json['TimestampUtc'] as String? ?? '',
+      limitations: json['Limitations'] as String? ?? '',
+      actionUri: json['ActionUri'] as String? ?? '',
+      actionLabel: json['ActionLabel'] as String? ?? 'Inspect',
+    );
+  }
+}
+
+class SystemReportData {
+  final String reportId;
+  final String generatedAtUtc;
+  final String machineName;
+  final String osVersion;
+  final ProtectionPostureSnapshot? posture;
+  final DeviceInventorySnapshot? inventory;
+  final NetworkActivitySnapshot? network;
+  final List<SecurityRecommendationItem> recommendations;
+  final String completedChecksSummary;
+  final String unavailableChecksSummary;
+  final String disclaimer;
+
+  SystemReportData({
+    required this.reportId,
+    required this.generatedAtUtc,
+    required this.machineName,
+    required this.osVersion,
+    this.posture,
+    this.inventory,
+    this.network,
+    this.recommendations = const [],
+    required this.completedChecksSummary,
+    required this.unavailableChecksSummary,
+    required this.disclaimer,
+  });
+
+  factory SystemReportData.fromJson(Map<String, dynamic> json) {
+    return SystemReportData(
+      reportId: json['ReportId'] as String? ?? '',
+      generatedAtUtc: json['GeneratedAtUtc'] as String? ?? '',
+      machineName: json['MachineName'] as String? ?? '',
+      osVersion: json['OsVersion'] as String? ?? '',
+      posture: json['Posture'] != null
+          ? ProtectionPostureSnapshot.fromJson(Map<String, dynamic>.from(json['Posture'] as Map))
+          : null,
+      inventory: json['Inventory'] != null
+          ? DeviceInventorySnapshot.fromJson(Map<String, dynamic>.from(json['Inventory'] as Map))
+          : null,
+      network: json['Network'] != null
+          ? NetworkActivitySnapshot.fromJson(Map<String, dynamic>.from(json['Network'] as Map))
+          : null,
+      recommendations: (json['Recommendations'] as List?)
+              ?.map((e) => SecurityRecommendationItem.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      completedChecksSummary: json['CompletedChecksSummary'] as String? ?? '',
+      unavailableChecksSummary: json['UnavailableChecksSummary'] as String? ?? '',
+      disclaimer: json['Disclaimer'] as String? ?? '',
+    );
+  }
+}
+
 class SessionMetadata {
   final int port;
   final String pipeName;

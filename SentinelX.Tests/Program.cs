@@ -22,7 +22,8 @@ namespace SentinelX.Tests
                 LoggerSanitizationTests.Run,
                 ProtectionPostureTests.Run,
                 DeviceProcessTests.Run,
-                NetworkScopeTests.Run
+                NetworkScopeTests.Run,
+                FimAndEventLogTests.RunAll
             };
 
             foreach (var test in testSuites)
