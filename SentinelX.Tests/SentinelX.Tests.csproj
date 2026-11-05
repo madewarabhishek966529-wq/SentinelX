@@ -40,6 +40,7 @@
     <Compile Include="Tests\DeviceProcessTests.cs" />
     <Compile Include="Tests\NetworkScopeTests.cs" />
     <Compile Include="Tests\FimAndEventLogTests.cs" />
+    <Compile Include="Tests\RecommendationAndReportTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

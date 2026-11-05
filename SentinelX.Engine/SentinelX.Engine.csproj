@@ -42,11 +42,15 @@
     <Compile Include="Handlers\NetworkHandler.cs" />
     <Compile Include="Handlers\FimHandler.cs" />
     <Compile Include="Handlers\EventsHandler.cs" />
+    <Compile Include="Handlers\RecommendationHandler.cs" />
+    <Compile Include="Handlers\ReportHandler.cs" />
     <Compile Include="Services\WindowsSecurityService.cs" />
     <Compile Include="Services\DeviceProcessService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\FimService.cs" />
     <Compile Include="Services\WindowsEventLogService.cs" />
+    <Compile Include="Services\RecommendationService.cs" />
+    <Compile Include="Services\ReportService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

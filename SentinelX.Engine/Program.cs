@@ -32,6 +32,8 @@ namespace SentinelX.Engine
                 var networkService = new Services.NetworkService(logger);
                 var fimService = new Services.FimService(logger);
                 var eventLogService = new Services.WindowsEventLogService(logger);
+                var recommendationService = new Services.RecommendationService(logger, securityService, deviceProcessService, fimService);
+                var reportService = new Services.ReportService(logger, securityService, deviceProcessService, networkService, recommendationService);
 
                 var handlers = new List<IRequestHandler>
                 {
@@ -41,7 +43,9 @@ namespace SentinelX.Engine
                     new DeviceProcessHandler(deviceProcessService),
                     new NetworkHandler(networkService),
                     new FimHandler(fimService),
-                    new EventsHandler(eventLogService)
+                    new EventsHandler(eventLogService),
+                    new RecommendationHandler(recommendationService),
+                    new ReportHandler(reportService)
                 };
 
                 ipcServer = new IpcServer(logger, sessionManager.CurrentSession, handlers, () =>
